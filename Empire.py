@@ -26,7 +26,7 @@ def run_empire(name, tab_file_path, result_file_path, scenariogeneration, scenar
 			   lengthPeakSeason, Period, Operationalhour, Scenario, Season, HoursOfSeason,
 			   discountrate, WACC, LeapYearsInvestment, WRITE_LP,
 			   PICKLE_INSTANCE, EMISSION_CAP, USE_TEMP_DIR, NoOfRegSeason, NoOfPeakSeason,
-			   offshoreNodesList, windfarmNodes = None, verboseResultWriting=False, optimizingWithBinaries=False,
+			   offshoreNodesList, windfarmNodes = None, verboseResultWriting=True, optimizingWithBinaries=False,
 			   hydrogen=False, hydrogenPercentage=0, exactSolution = False, TIME_LIMIT=None,
 			   h2storage=False, h2priceOtherMarkets=-999, otherMarketNodes=[]):
 
@@ -58,6 +58,8 @@ def run_empire(name, tab_file_path, result_file_path, scenariogeneration, scenar
 		print("Solver: Xpress")
 	elif solver == "Gurobi":
 		print("Solver: Gurobi")
+	elif solver == "HiGHS":
+		print("Solver: HiGHS")
 	else:
 		sys.exit("ERROR! Invalid solver! Options: CPLEX, Xpress, Gurobi")
 
@@ -1241,14 +1243,14 @@ def run_empire(name, tab_file_path, result_file_path, scenariogeneration, scenar
 			opt.options['timelimit'] = TIME_LIMIT
 		#instance.display('outputs_cplex.txt')
 	if solver == "Xpress":
-		opt = SolverFactory("xpress") #Verbose=True
-		opt.options["defaultAlg"] = 4
+		opt = SolverFactory("xpress", Verbose=True) #Verbose=True
+		opt.options["defaultalg"] = 4
 		opt.options["crossover"] = 0
-		opt.options["lpLog"] = 1
-		opt.options["Trace"] = 1
+		opt.options["lplog"] = 1
+		opt.options["trace"] = 1
 		if TIME_LIMIT is not None and TIME_LIMIT > 0:
 			opt.options['maxtime'] = TIME_LIMIT
-		#instance.display('outputs_xpress.txt')
+		instance.display('outputs_xpress.txt')
 	if solver == "Gurobi":
 		opt = SolverFactory('gurobi', Verbose=True)
 		opt.options["Crossover"]=0
@@ -1261,9 +1263,16 @@ def run_empire(name, tab_file_path, result_file_path, scenariogeneration, scenar
 			opt.options["Method"]=0
 		else:
 			opt.options["Method"]=2
-
+	
+#	print(opt.available())
+#	print(opt.license_is_valid())
+#	print(opt.version())
+	
+	
 	try:
-		results = opt.solve(instance, tee=True, logfile=result_file_path + '/logfile_' + name + '.log')#, keepfiles=True, symbolic_solver_labels=True)
+		
+		results = opt.solve(instance, tee=True, options = {"baralg" = 1}, logfile=result_file_path + '/logfile_' + name + '.log')#, keepfiles=True, symbolic_solver_labels=True)
+		print("Solved")
 	except:
 		print('{hour}:{minute}:{second}: ERROR: Could not load results. Likely cause: time limit reached'.format(
 			hour=datetime.now().strftime("%H"), minute = datetime.now().strftime("%M"), second=datetime.now().strftime("%S")))
