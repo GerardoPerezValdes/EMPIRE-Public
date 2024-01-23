@@ -65,7 +65,7 @@ def sample_generator(data, regularSeasonHours, scenario, season, seasons,
                           "Period": period,
                           "GeneratorStochasticAvailabilityRaw": 
                               sample_data[c].values})
-                generator_data = generator_data.append(df, ignore_index=True)
+                generator_data = pd.concat([generator_data,df])
         else:
             df = pd.DataFrame(
                 data={'Node': c, "IntermitentGenerators": generator,
@@ -74,7 +74,7 @@ def sample_generator(data, regularSeasonHours, scenario, season, seasons,
                       "Period": period,
                       "GeneratorStochasticAvailabilityRaw": 
                           sample_data[c].values})
-            generator_data = generator_data.append(df, ignore_index=True)
+            generator_data = pd.concat([generator_data,df])
     return generator_data
 
 def sample_hydro(data, regularSeasonHours, scenario, season,
@@ -91,7 +91,7 @@ def sample_hydro(data, regularSeasonHours, scenario, season,
                       "Scenario": "scenario" + str(scenario),
                       "HydroGeneratorMaxSeasonalProduction": 
                           sample_data[c].values})
-            hydro_data = hydro_data.append(df, ignore_index=True)
+            hydro_data = pd.concat([hydro_data,df])
     return hydro_data
 
 def sample_load(data, regularSeasonHours, scenario, season, seasons,
@@ -106,7 +106,7 @@ def sample_load(data, regularSeasonHours, scenario, season, seasons,
                 data={'Node': c, "Period": period, "Operationalhour": hours,
                       "Scenario": "scenario" + str(scenario),
                       "ElectricLoadRaw_in_MW": sample_data[c].values})
-            load = load.append(df, ignore_index=True)
+            load = pd.concat([load, df])
     return load
 
 def gather_peak_sample(data, seasons, regularSeasonHours, peakSeasonHours,
@@ -155,14 +155,14 @@ def sample_hydro_peak(data, seasons, scenario, period, regularSeasonHours,
                   "Scenario": "scenario" + str(scenario),
                   "HydroGeneratorMaxSeasonalProduction": 
                       country_peak[c].values})
-        peak_data = peak_data.append(df, ignore_index=True)
+        peak_data = pd.concat([peak_data, df])
         df = pd.DataFrame(
             data={'Node': c, "Period": period, "Season": "peak2",
                   "Operationalhour": overall_hours,
                   "Scenario": "scenario" + str(scenario),
                   "HydroGeneratorMaxSeasonalProduction": 
                       overall_peak[c].values})
-        peak_data = peak_data.append(df, ignore_index=True)
+        peak_data = pd.concat([peak_data, df])
     return peak_data
 
 def sample_load_peak(data, seasons, scenario, period, regularSeasonHours,
@@ -180,13 +180,13 @@ def sample_load_peak(data, seasons, scenario, period, regularSeasonHours,
                   "Operationalhour": country_hours,
                   "Scenario": "scenario" + str(scenario),
                   "ElectricLoadRaw_in_MW": country_peak[c].values})
-        peak_data = peak_data.append(df, ignore_index=True)
+        peak_data = pd.concat([peak_data,df])
         df = pd.DataFrame(
             data={'Node': c, "Period": period, 
                   "Operationalhour": overall_hours,
                   "Scenario": "scenario" + str(scenario),
                   "ElectricLoadRaw_in_MW": overall_peak[c].values})
-        peak_data = peak_data.append(df, ignore_index=True)
+        peak_data = pd.concat([peak_data,df])
     return peak_data
 
 def sample_generator_peak(data, seasons, g, scenario,
@@ -214,7 +214,7 @@ def sample_generator_peak(data, seasons, g, scenario,
                       "Period": period, 
                       "GeneratorStochasticAvailabilityRaw": 
                           country_peak[c].values})
-                peak_data = peak_data.append(df, ignore_index=True)
+                peak_data = pd.concat([peak_data,df])
                 df = pd.DataFrame(
                 data={'Node': c_no, "IntermitentGenerators": g, 
                       "Operationalhour": overall_hours, 
@@ -222,7 +222,7 @@ def sample_generator_peak(data, seasons, g, scenario,
                       "Period": period, 
                       "GeneratorStochasticAvailabilityRaw": 
                           overall_peak[c].values})
-                peak_data = peak_data.append(df, ignore_index=True)
+                peak_data = pd.concat([peak_data,df])
         else:
             df = pd.DataFrame(
             data={'Node': c, "IntermitentGenerators": g, 
@@ -231,7 +231,7 @@ def sample_generator_peak(data, seasons, g, scenario,
                   "Period": period,
                   "GeneratorStochasticAvailabilityRaw": 
                       country_peak[c].values})
-            peak_data = peak_data.append(df, ignore_index=True)
+            peak_data = pd.concat([peak_data,df])
             df = pd.DataFrame(
             data={'Node': c, "IntermitentGenerators": g, 
                   "Operationalhour": overall_hours,
@@ -239,7 +239,7 @@ def sample_generator_peak(data, seasons, g, scenario,
                   "Period": period,
                  "GeneratorStochasticAvailabilityRaw": 
                      overall_peak[c].values})
-            peak_data = peak_data.append(df, ignore_index=True)
+            peak_data = pd.concat([peak_data,df])
     return peak_data
 
 def generate_random_scenario(filepath, tab_file_path, scenarios, seasons,
@@ -312,57 +312,57 @@ def generate_random_scenario(filepath, tab_file_path, scenarios, seasons,
                     0, max_sample - regularSeasonHours - 1)
                 
                 # Sample generator availability for regular seasons
-                genAvail = genAvail.append(
+                genAvail = pd.concat([genAvail, 
                     sample_generator(data=solar_data_year,
                                      regularSeasonHours=regularSeasonHours,
                                      scenario=scenario, season=s,
                                      seasons=seasons, period=i,
                                      generator="Solar",
-                                     sample_hour=sample_hour))
-                genAvail = genAvail.append(
+                                     sample_hour=sample_hour)])
+                genAvail = pd.concat([genAvail,
                     sample_generator(data=windonshore_data_year,
                                      regularSeasonHours=regularSeasonHours,
                                      scenario=scenario, season=s,
                                      seasons=seasons, period=i,
                                      generator="Windonshore",
-                                     sample_hour=sample_hour))
-                genAvail = genAvail.append(
+                                     sample_hour=sample_hour)])
+                genAvail = pd.concat([genAvail,
                     sample_generator(data=windoffshore_data_year,
                                      regularSeasonHours=regularSeasonHours, 
                                      scenario=scenario, season=s,
                                      seasons=seasons, period=i,
                                      generator="Windoffshoregrounded", 
-                                     sample_hour=sample_hour))
-                genAvail = genAvail.append(
+                                     sample_hour=sample_hour)])
+                genAvail = pd.concat([genAvail,
                     sample_generator(data=windoffshore_data_year,
                                      regularSeasonHours=regularSeasonHours, 
                                      scenario=scenario, season=s,
                                      seasons=seasons, period=i,
                                      generator="Windoffshorefloating", 
-                                     sample_hour=sample_hour))
-                genAvail = genAvail.append(
+                                     sample_hour=sample_hour)])
+                genAvail = pd.concat([genAvail,
                     sample_generator(data=hydrorunoftheriver_data_year,
                                      regularSeasonHours=regularSeasonHours, 
                                      scenario=scenario, season=s, 
                                      seasons=seasons, period=i, 
                                      generator="Hydrorun-of-the-river", 
-                                     sample_hour=sample_hour))
+                                     sample_hour=sample_hour)])
 
                 # Sample electric load for regular seasons
-                elecLoad = elecLoad.append(
+                elecLoad = pd.concat([elecLoad,
                     sample_load(data=electricload_data_year,
                                 regularSeasonHours=regularSeasonHours,
                                 scenario=scenario, season=s,
                                 seasons=seasons, period=i, 
-                                sample_hour=sample_hour))
+                                sample_hour=sample_hour)])
                 
                 # Sample seasonal hydro limit for regular seasons
-                hydroSeasonal = hydroSeasonal.append(
+                hydroSeasonal = pd.concat([hydroSeasonal,
                     sample_hydro(data=hydroseasonal_data,
                                  regularSeasonHours=regularSeasonHours,
                                  scenario=scenario, season=s, 
                                  seasons=seasons, period=i,
-                                 sample_hour=sample_hour))
+                                 sample_hour=sample_hour)])
             
             ################
             ##PEAK SEASONS##
@@ -376,15 +376,15 @@ def generate_random_scenario(filepath, tab_file_path, scenarios, seasons,
             country_sample = electricload_data_year_notime[max_load_country].idxmax()
 
             #Sample generator availability for peak seasons
-            genAvail = genAvail.append(
+            genAvail = pd.concat([genAvail,
                 sample_generator_peak(data=solar_data_year,
                                       seasons=seasons,
                                       g="Solar", scenario=scenario, period=i,
                                       regularSeasonHours=regularSeasonHours,
                                       peakSeasonHours=peakSeasonHours,
                                       overall_sample=overall_sample,
-                                      country_sample=country_sample))
-            genAvail = genAvail.append(
+                                      country_sample=country_sample)])
+            genAvail = pd.concat([genAvail,
                 sample_generator_peak(data=windonshore_data_year,
                                       seasons=seasons, 
                                       g="Windonshore", scenario=scenario, 
@@ -392,8 +392,8 @@ def generate_random_scenario(filepath, tab_file_path, scenarios, seasons,
                                       regularSeasonHours=regularSeasonHours,
                                       peakSeasonHours=peakSeasonHours,
                                       overall_sample=overall_sample, 
-                                      country_sample=country_sample))
-            genAvail = genAvail.append(
+                                      country_sample=country_sample)])
+            genAvail = pd.concat([genAvail,
                 sample_generator_peak(data=windoffshore_data_year,
                                       seasons=seasons, 
                                       g="Windoffshoregrounded", scenario=scenario,
@@ -401,8 +401,8 @@ def generate_random_scenario(filepath, tab_file_path, scenarios, seasons,
                                       regularSeasonHours=regularSeasonHours, 
                                       peakSeasonHours=peakSeasonHours, 
                                       overall_sample=overall_sample, 
-                                      country_sample=country_sample))
-            genAvail = genAvail.append(
+                                      country_sample=country_sample)])
+            genAvail = pd.concat([genAvail,
                 sample_generator_peak(data=windoffshore_data_year,
                                       seasons=seasons, 
                                       g="Windoffshorefloating", scenario=scenario,
@@ -410,8 +410,8 @@ def generate_random_scenario(filepath, tab_file_path, scenarios, seasons,
                                       regularSeasonHours=regularSeasonHours, 
                                       peakSeasonHours=peakSeasonHours, 
                                       overall_sample=overall_sample, 
-                                      country_sample=country_sample))
-            genAvail = genAvail.append(
+                                      country_sample=country_sample)])
+            genAvail = pd.concat([genAvail,
                 sample_generator_peak(data=hydrorunoftheriver_data_year,
                                       seasons=seasons, 
                                       g="Hydrorun-of-the-river",
@@ -419,27 +419,27 @@ def generate_random_scenario(filepath, tab_file_path, scenarios, seasons,
                                       regularSeasonHours=regularSeasonHours,
                                       peakSeasonHours=peakSeasonHours,
                                       overall_sample=overall_sample, 
-                                      country_sample=country_sample))
+                                      country_sample=country_sample)])
             
             #Sample electric load for peak seasons
-            elecLoad = elecLoad.append(
+            elecLoad = pd.concat([elecLoad,
                 sample_load_peak(data=electricload_data_year,
                                  seasons=seasons,
                                  scenario=scenario, period=i, 
                                  regularSeasonHours=regularSeasonHours, 
                                  peakSeasonHours=peakSeasonHours,
                                  overall_sample=overall_sample, 
-                                 country_sample=country_sample))
+                                 country_sample=country_sample)])
             
             #Sample seasonal hydro limit for peak seasons
-            hydroSeasonal = hydroSeasonal.append(
+            hydroSeasonal = pd.concat([hydroSeasonal,
                 sample_hydro_peak(data=hydroseasonal_data,
                                   seasons=seasons,
                                   scenario=scenario, period=i, 
                                   regularSeasonHours=regularSeasonHours, 
                                   peakSeasonHours=peakSeasonHours,
                                   overall_sample=overall_sample, 
-                                  country_sample=country_sample))
+                                  country_sample=country_sample)])
 
     #Replace country codes with country names
     genAvail = genAvail.replace({"Node": dict_countries})

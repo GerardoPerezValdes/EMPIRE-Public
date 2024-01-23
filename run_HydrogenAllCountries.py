@@ -13,16 +13,16 @@ USE_TEMP_DIR = True #True/False
 temp_dir = '/mnt/beegfs/users/gorand/TempDir'
 version = 'hydrogenAllCountries'
 NoOfPeriods = 8
-NoOfScenarios = 3
+NoOfScenarios = 1
 NoOfRegSeason = 4
-lengthRegSeason = 168
+lengthRegSeason = 48
 regular_seasons = ["winter", "spring", "summer", "fall"]
 NoOfPeakSeason = 2
-lengthPeakSeason = 24
+lengthPeakSeason = 12
 discountrate = 0.05
 WACC = 0.05
 LeapYearsInvestment = 5
-solver = "Gurobi" #"Gurobi" #"CPLEX" #"Xpress"
+solver = "Xpress" #"Gurobi" #"CPLEX" #"Xpress"
 scenariogeneration = True #True #False
 EMISSION_CAP = True #False
 WRITE_LP = False #True
@@ -34,7 +34,7 @@ otherMarketNodes = ['Germany', 'France', 'Spain','Austria','Italy','Greece']
 h2priceOtherMarkets = 1
 exactSolution = False
 h2storage = False
-TIME_LIMIT = 0
+TIME_LIMIT = 3600
 
 #######
 ##RUN##
@@ -147,7 +147,7 @@ for hydrogenPercentage in hydrogenPercentages:
                NoOfRegSeason = NoOfRegSeason,
                NoOfPeakSeason = NoOfPeakSeason,
                offshoreNodesList = offshoreNodesList,
-               verboseResultWriting = False,
+               verboseResultWriting = True,
                optimizingWithBinaries = OptimizingWithBinaries,
                hydrogen = hydrogen,
                hydrogenPercentage = 100/100,
